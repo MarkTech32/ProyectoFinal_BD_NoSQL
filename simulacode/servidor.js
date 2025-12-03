@@ -1,6 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const octokit = require('./config/github');
+const conectarDB = require('./config/basedatos');
+
+conectarDB();
 
 const app = express();
 app.use(express.json());
