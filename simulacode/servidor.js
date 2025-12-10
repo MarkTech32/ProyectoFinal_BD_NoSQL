@@ -10,6 +10,7 @@ app.use(express.json());
 
 console.log('Token cargado:', process.env.GITHUB_TOKEN ? 'Sí' : 'No');
 
+//Rutas
 const retosRoutes = require('./routes/retos');
 app.use('/api', retosRoutes);
 
