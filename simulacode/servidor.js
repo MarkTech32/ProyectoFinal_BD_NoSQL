@@ -12,7 +12,9 @@ app.use(express.static('public'));
 console.log('Token cargado:', process.env.GITHUB_TOKEN ? 'Sí' : 'No');
 
 const retosRoutes = require('./routes/retos');
+const solucionesRoutes = require('./routes/soluciones');
 app.use('/api', retosRoutes);
+app.use('/api', solucionesRoutes);
 
 app.get('/prueba-github', async (req, res) => {
   const repos = await octokit.repos.listForAuthenticatedUser();
