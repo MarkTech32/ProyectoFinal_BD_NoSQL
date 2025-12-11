@@ -32,3 +32,17 @@ exports.listarPRs = async (req, res) => {
   
   res.json(prs.data);
 };
+
+exports.comentarPR = async (req, res) => {
+  const reto = await Reto.findById(req.params.id);
+  const [owner, repo] = reto.repositorio.split('/');
+  
+  const comment = await octokit.issues.createComment({
+    owner: owner,
+    repo: repo,
+    issue_number: req.body.prNumber,
+    body: req.body.comentario
+  });
+  
+  res.json(comment.data);
+};

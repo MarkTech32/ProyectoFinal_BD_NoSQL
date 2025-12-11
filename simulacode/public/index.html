@@ -51,11 +51,36 @@
           <p>${reto.descripcion}</p>
           <p>Repositorio: ${reto.repositorio}</p>
           <button onclick="verPRs('${reto._id}')">Ver Pull Requests</button>
+          <button onclick="verSoluciones('${reto._id}')">Ver Soluciones Enviadas</button>
           <div id="prs-${reto._id}"></div>
+          <div id="soluciones-${reto._id}"></div>
           <hr>
         `;
         listaRetos.appendChild(div);
       });
+    }
+
+    async function verSoluciones(retoId) {
+      const response = await fetch(`/api/retos/${retoId}/soluciones`);
+      const soluciones = await response.json();
+      
+      const divSoluciones = document.getElementById(`soluciones-${retoId}`);
+      
+      if (soluciones.length === 0) {
+        divSoluciones.innerHTML = '<p>No hay soluciones enviadas aún</p>';
+      } else {
+        divSoluciones.innerHTML = '<h4>Soluciones Enviadas:</h4>';
+        soluciones.forEach(solucion => {
+          divSoluciones.innerHTML += `
+            <p>
+              Estado: ${solucion.estado}
+              <br>PR #${solucion.pullRequestNumber}
+              <br><a href="${solucion.pullRequestUrl}" target="_blank">Ver Pull Request</a>
+              <br>Enviado: ${new Date(solucion.fechaEnvio).toLocaleDateString()}
+            </p>
+          `;
+        });
+      }
     }
 
     async function verPRs(retoId) {
@@ -73,10 +98,33 @@
             <p>
               PR #${pr.number}: ${pr.title} - ${pr.state}
               <br><a href="${pr.html_url}" target="_blank">Ver en GitHub</a>
+              <br>
+              <form onsubmit="comentarPR(event, '${retoId}', ${pr.number})">
+                <input type="text" id="comentario-${retoId}-${pr.number}" placeholder="Escribe un comentario" required>
+                <button type="submit">Enviar Comentario</button>
+              </form>
             </p>
           `;
         });
       }
+    }
+
+    async function comentarPR(event, retoId, prNumber) {
+      event.preventDefault();
+      
+      const comentario = document.getElementById(`comentario-${retoId}-${prNumber}`).value;
+      
+      const response = await fetch(`/api/retos/${retoId}/comentar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          prNumber: prNumber,
+          comentario: comentario
+        })
+      });
+      
+      alert('Comentario enviado correctamente');
+      event.target.reset();
     }
 
     cargarRetos();

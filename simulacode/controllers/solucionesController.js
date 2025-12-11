@@ -10,3 +10,8 @@ exports.listarSoluciones = async (req, res) => {
   const soluciones = await Solucion.find();
   res.json(soluciones);
 };
+
+exports.listarSolucionesPorReto = async (req, res) => {
+  const soluciones = await Solucion.find({ retoId: req.params.retoId });
+  res.json(soluciones);
+};
