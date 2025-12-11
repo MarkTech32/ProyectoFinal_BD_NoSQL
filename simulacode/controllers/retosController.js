@@ -46,3 +46,21 @@ exports.comentarPR = async (req, res) => {
   
   res.json(comment.data);
 };
+
+exports.eliminarReto = async (req, res) => {
+  const reto = await Reto.findById(req.params.id);
+  const [owner, repo] = reto.repositorio.split('/');
+  
+  try {
+    await octokit.repos.delete({
+      owner: owner,
+      repo: repo
+    });
+  } catch (error) {
+    console.log('El repositorio no existe en GitHub o ya fue eliminado');
+  }
+  
+  await Reto.findByIdAndDelete(req.params.id);
+  
+  res.json({ message: 'Reto eliminado de MongoDB' });
+};

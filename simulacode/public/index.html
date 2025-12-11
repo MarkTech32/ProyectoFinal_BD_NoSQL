@@ -52,12 +52,26 @@
           <p>Repositorio: ${reto.repositorio}</p>
           <button onclick="verPRs('${reto._id}')">Ver Pull Requests</button>
           <button onclick="verSoluciones('${reto._id}')">Ver Soluciones Enviadas</button>
+          <button onclick="eliminarReto('${reto._id}', '${reto.titulo}')" style="background-color: red; color: white;">Eliminar Reto</button>
           <div id="prs-${reto._id}"></div>
           <div id="soluciones-${reto._id}"></div>
           <hr>
         `;
         listaRetos.appendChild(div);
       });
+    }
+
+    async function eliminarReto(retoId, titulo) {
+      const confirmacion = confirm(`¿Estás seguro de eliminar el reto "${titulo}"? Esto eliminará el repositorio de GitHub y todos los datos asociados.`);
+      
+      if (!confirmacion) return;
+      
+      const response = await fetch(`/api/retos/${retoId}`, {
+        method: 'DELETE'
+      });
+      
+      alert('Reto eliminado correctamente');
+      cargarRetos();
     }
 
     async function verSoluciones(retoId) {
