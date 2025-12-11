@@ -8,10 +8,23 @@
 <body>
   <h1>Panel de Mentor</h1>
   
+  <h2>Crear Nueva Categoría</h2>
+  <form id="formCategoria">
+    <input type="text" id="nombreCategoria" placeholder="Nombre de la categoría" required>
+    <input type="text" id="descripcionCategoria" placeholder="Descripción" required>
+    <button type="submit">Crear Categoría</button>
+  </form>
+  
+  <h2>Categorías Existentes</h2>
+  <div id="listaCategorias"></div>
+  
   <h2>Crear Nuevo Reto</h2>
   <form id="formReto">
     <input type="text" id="titulo" placeholder="Nombre del reto" required>
     <input type="text" id="descripcion" placeholder="Descripción" required>
+    <select id="categoria" required>
+      <option value="">Selecciona una categoría</option>
+    </select>
     <button type="submit">Crear Reto</button>
   </form>
   
@@ -20,17 +33,36 @@
 
   <script>
     const formReto = document.getElementById('formReto');
+    const formCategoria = document.getElementById('formCategoria');
     const listaRetos = document.getElementById('listaRetos');
+    const listaCategorias = document.getElementById('listaCategorias');
+
+    formCategoria.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const nombre = document.getElementById('nombreCategoria').value;
+      const descripcion = document.getElementById('descripcionCategoria').value;
+
+      await fetch('/api/categorias', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, descripcion })
+      });
+
+      alert('Categoría creada');
+      formCategoria.reset();
+      cargarCategorias();
+    });
 
     formReto.addEventListener('submit', async (e) => {
       e.preventDefault();
       const titulo = document.getElementById('titulo').value;
       const descripcion = document.getElementById('descripcion').value;
+      const categoriaId = document.getElementById('categoria').value;
 
       const response = await fetch('/api/retos', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ titulo, descripcion })
+        body: JSON.stringify({ titulo, descripcion, categoriaId })
       });
 
       const reto = await response.json();
@@ -39,16 +71,47 @@
       formReto.reset();
     });
 
+    async function cargarCategorias() {
+      const response = await fetch('/api/categorias');
+      const categorias = await response.json();
+      
+      listaCategorias.innerHTML = '';
+      const select = document.getElementById('categoria');
+      select.innerHTML = '<option value="">Selecciona una categoría</option>';
+      
+      categorias.forEach(cat => {
+        listaCategorias.innerHTML += `
+          <p>${cat.nombre} - ${cat.descripcion} 
+          <button onclick="eliminarCategoria('${cat._id}')">Eliminar</button></p>
+        `;
+        
+        const option = document.createElement('option');
+        option.value = cat._id;
+        option.textContent = cat.nombre;
+        select.appendChild(option);
+      });
+    }
+
+    async function eliminarCategoria(id) {
+      await fetch(`/api/categorias/${id}`, { method: 'DELETE' });
+      alert('Categoría eliminada');
+      cargarCategorias();
+    }
+
     async function cargarRetos() {
       const response = await fetch('/api/retos');
       const retos = await response.json();
       
+      const categorias = await fetch('/api/categorias').then(r => r.json());
+      
       listaRetos.innerHTML = '';
       retos.forEach(reto => {
+        const categoria = categorias.find(c => c._id === reto.categoriaId);
         const div = document.createElement('div');
         div.innerHTML = `
           <h3>${reto.titulo}</h3>
           <p>${reto.descripcion}</p>
+          <p><strong>Categoría:</strong> ${categoria ? categoria.nombre : 'Sin categoría'}</p>
           <p>Repositorio: ${reto.repositorio}</p>
           <button onclick="verPRs('${reto._id}')">Ver Pull Requests</button>
           <button onclick="verSoluciones('${reto._id}')">Ver Soluciones Enviadas</button>
@@ -66,9 +129,7 @@
       
       if (!confirmacion) return;
       
-      const response = await fetch(`/api/retos/${retoId}`, {
-        method: 'DELETE'
-      });
+      await fetch(`/api/retos/${retoId}`, { method: 'DELETE' });
       
       alert('Reto eliminado correctamente');
       cargarRetos();
@@ -185,6 +246,7 @@
       event.target.reset();
     }
 
+    cargarCategorias();
     cargarRetos();
   </script>
 </body>
