@@ -72,15 +72,59 @@
         divSoluciones.innerHTML = '<h4>Soluciones Enviadas:</h4>';
         soluciones.forEach(solucion => {
           divSoluciones.innerHTML += `
-            <p>
-              Estado: ${solucion.estado}
-              <br>PR #${solucion.pullRequestNumber}
-              <br><a href="${solucion.pullRequestUrl}" target="_blank">Ver Pull Request</a>
-              <br>Enviado: ${new Date(solucion.fechaEnvio).toLocaleDateString()}
-            </p>
+            <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
+              <p><strong>Estado:</strong> ${solucion.estado}</p>
+              <p>PR #${solucion.pullRequestNumber}</p>
+              <p><a href="${solucion.pullRequestUrl}" target="_blank">Ver Pull Request</a></p>
+              <p>Enviado: ${new Date(solucion.fechaEnvio).toLocaleDateString()}</p>
+              
+              <textarea id="comentario-aprobar-${solucion._id}" placeholder="Comentario de aprobación" rows="2" style="width: 100%;"></textarea>
+              <button onclick="aprobarPR('${solucion._id}', '${retoId}', ${solucion.pullRequestNumber})">Aprobar y Merge</button>
+              
+              <br><br>
+              
+              <textarea id="comentario-rechazar-${solucion._id}" placeholder="Comentario de rechazo" rows="2" style="width: 100%;"></textarea>
+              <button onclick="rechazarPR('${solucion._id}', '${retoId}', ${solucion.pullRequestNumber})">Rechazar y Cerrar</button>
+            </div>
           `;
         });
       }
+    }
+
+    async function aprobarPR(solucionId, retoId, prNumber) {
+      const comentario = document.getElementById(`comentario-aprobar-${solucionId}`).value;
+      
+      if (!comentario) {
+        alert('Por favor escribe un comentario explicando por qué apruebas este PR');
+        return;
+      }
+      
+      const response = await fetch(`/api/retos/${retoId}/soluciones/${solucionId}/aprobar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prNumber: prNumber, comentario: comentario })
+      });
+      
+      alert('PR aprobado y merged en GitHub!');
+      verSoluciones(retoId);
+    }
+
+    async function rechazarPR(solucionId, retoId, prNumber) {
+      const comentario = document.getElementById(`comentario-rechazar-${solucionId}`).value;
+      
+      if (!comentario) {
+        alert('Por favor escribe un comentario explicando por qué rechazas este PR');
+        return;
+      }
+      
+      const response = await fetch(`/api/retos/${retoId}/soluciones/${solucionId}/rechazar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prNumber: prNumber, comentario: comentario })
+      });
+      
+      alert('PR rechazado y cerrado en GitHub!');
+      verSoluciones(retoId);
     }
 
     async function verPRs(retoId) {
