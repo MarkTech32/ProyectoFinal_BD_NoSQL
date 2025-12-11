@@ -20,3 +20,15 @@ exports.listarRetos = async (req, res) => {
   const retos = await Reto.find();
   res.json(retos);
 };
+
+exports.listarPRs = async (req, res) => {
+  const reto = await Reto.findById(req.params.id);
+  const [owner, repo] = reto.repositorio.split('/');
+  
+  const prs = await octokit.pulls.list({
+    owner: owner,
+    repo: repo
+  });
+  
+  res.json(prs.data);
+};
