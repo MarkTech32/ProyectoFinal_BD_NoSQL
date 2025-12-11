@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Mentor</title>
+</head>
+<body>
+  <h1>Panel de Mentor</h1>
+  
+  <h2>Crear Nuevo Reto</h2>
+  <form id="formReto">
+    <input type="text" id="titulo" placeholder="Nombre del reto" required>
+    <input type="text" id="descripcion" placeholder="Descripción" required>
+    <button type="submit">Crear Reto</button>
+  </form>
+  
+  <h2>Mis Retos</h2>
+  <div id="listaRetos"></div>
+
+  <script>
+    const formReto = document.getElementById('formReto');
+    const listaRetos = document.getElementById('listaRetos');
+
+    formReto.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const titulo = document.getElementById('titulo').value;
+      const descripcion = document.getElementById('descripcion').value;
+
+      const response = await fetch('/api/retos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ titulo, descripcion })
+      });
+
+      const reto = await response.json();
+      alert('Reto creado: ' + reto.titulo);
+      cargarRetos();
+      formReto.reset();
+    });
+
+    async function cargarRetos() {
+      const response = await fetch('/api/retos');
+      const retos = await response.json();
+      
+      listaRetos.innerHTML = '';
+      retos.forEach(reto => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+          <h3>${reto.titulo}</h3>
+          <p>${reto.descripcion}</p>
+          <p>Repositorio: ${reto.repositorio}</p>
+          <button onclick="verPRs('${reto._id}')">Ver Pull Requests</button>
+          <div id="prs-${reto._id}"></div>
+          <hr>
+        `;
+        listaRetos.appendChild(div);
+      });
+    }
+
+    async function verPRs(retoId) {
+      const response = await fetch(`/api/retos/${retoId}/prs`);
+      const prs = await response.json();
+      
+      const divPRs = document.getElementById(`prs-${retoId}`);
+      
+      if (prs.length === 0) {
+        divPRs.innerHTML = '<p>No hay pull requests aún</p>';
+      } else {
+        divPRs.innerHTML = '<h4>Pull Requests:</h4>';
+        prs.forEach(pr => {
+          divPRs.innerHTML += `
+            <p>
+              PR #${pr.number}: ${pr.title} - ${pr.state}
+              <br><a href="${pr.html_url}" target="_blank">Ver en GitHub</a>
+            </p>
+          `;
+        });
+      }
+    }
+
+    cargarRetos();
+  </script>
+</body>
+</html>

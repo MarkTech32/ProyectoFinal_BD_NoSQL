@@ -7,10 +7,10 @@ conectarDB();
 
 const app = express();
 app.use(express.json());
+app.use(express.static('public'));
 
 console.log('Token cargado:', process.env.GITHUB_TOKEN ? 'Sí' : 'No');
 
-//Rutas
 const retosRoutes = require('./routes/retos');
 app.use('/api', retosRoutes);
 
