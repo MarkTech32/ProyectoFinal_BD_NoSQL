@@ -115,13 +115,71 @@
           <p>Repositorio: ${reto.repositorio}</p>
           <button onclick="verPRs('${reto._id}')">Ver Pull Requests</button>
           <button onclick="verSoluciones('${reto._id}')">Ver Soluciones Enviadas</button>
+          <button onclick="verComentarios('${reto._id}')">Ver Historial de Comentarios</button>
+          <button onclick="mostrarCalificacion('${reto._id}')">Calificar Reto</button>
           <button onclick="eliminarReto('${reto._id}', '${reto.titulo}')" style="background-color: red; color: white;">Eliminar Reto</button>
+          <div id="form-calificacion-${reto._id}" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
+            <h4>Calificar Reto</h4>
+            <label>Dificultad (1-5): <input type="number" id="dificultad-${reto._id}" min="1" max="5" value="3"></label><br>
+            <label>Calidad (1-5): <input type="number" id="calidad-${reto._id}" min="1" max="5" value="3"></label><br>
+            <label>Utilidad (1-5): <input type="number" id="utilidad-${reto._id}" min="1" max="5" value="3"></label><br>
+            <button onclick="guardarCalificacion('${reto._id}')">Guardar</button>
+            <button onclick="cancelarCalificacion('${reto._id}')">Cancelar</button>
+          </div>
           <div id="prs-${reto._id}"></div>
           <div id="soluciones-${reto._id}"></div>
+          <div id="comentarios-${reto._id}"></div>
           <hr>
         `;
         listaRetos.appendChild(div);
       });
+    }
+
+    function mostrarCalificacion(retoId) {
+      const form = document.getElementById(`form-calificacion-${retoId}`);
+      form.style.display = 'block';
+    }
+
+    function cancelarCalificacion(retoId) {
+      const form = document.getElementById(`form-calificacion-${retoId}`);
+      form.style.display = 'none';
+    }
+
+    async function guardarCalificacion(retoId) {
+      const dificultad = document.getElementById(`dificultad-${retoId}`).value;
+      const calidad = document.getElementById(`calidad-${retoId}`).value;
+      const utilidad = document.getElementById(`utilidad-${retoId}`).value;
+
+      await fetch('/api/calificaciones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ retoId, dificultad, calidad, utilidad })
+      });
+
+      alert('Calificación guardada');
+      cancelarCalificacion(retoId);
+    }
+
+    async function verComentarios(retoId) {
+      const response = await fetch(`/api/retos/${retoId}/comentarios`);
+      const comentarios = await response.json();
+      
+      const divComentarios = document.getElementById(`comentarios-${retoId}`);
+      
+      if (comentarios.length === 0) {
+        divComentarios.innerHTML = '<p>No hay comentarios aún</p>';
+      } else {
+        divComentarios.innerHTML = '<h4>Historial de Comentarios:</h4>';
+        comentarios.forEach(com => {
+          divComentarios.innerHTML += `
+            <p>
+              <strong>${com.autor}</strong> - PR #${com.prNumber}
+              <br>${com.contenido}
+              <br><small>${new Date(com.fechaCreacion).toLocaleString()}</small>
+            </p>
+          `;
+        });
+      }
     }
 
     async function eliminarReto(retoId, titulo) {
