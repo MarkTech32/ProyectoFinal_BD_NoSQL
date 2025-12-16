@@ -8,6 +8,10 @@ const retoSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Categoria'
   },
+  etiquetas: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Etiqueta'
+  }],
   mentorId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Usuario'

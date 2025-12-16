@@ -18,6 +18,16 @@
   <h2>Categorías Existentes</h2>
   <div id="listaCategorias"></div>
   
+  <h2>Crear Nueva Etiqueta</h2>
+  <form id="formEtiqueta">
+    <input type="text" id="nombreEtiqueta" placeholder="Nombre de la etiqueta" required>
+    <input type="color" id="colorEtiqueta" value="#3498db">
+    <button type="submit">Crear Etiqueta</button>
+  </form>
+  
+  <h2>Etiquetas Existentes</h2>
+  <div id="listaEtiquetas"></div>
+  
   <h2>Crear Nuevo Reto</h2>
   <form id="formReto">
     <input type="text" id="titulo" placeholder="Nombre del reto" required>
@@ -25,287 +35,13 @@
     <select id="categoria" required>
       <option value="">Selecciona una categoría</option>
     </select>
+    <div id="etiquetasCheckboxes"></div>
     <button type="submit">Crear Reto</button>
   </form>
   
   <h2>Mis Retos</h2>
   <div id="listaRetos"></div>
 
-  <script>
-    const formReto = document.getElementById('formReto');
-    const formCategoria = document.getElementById('formCategoria');
-    const listaRetos = document.getElementById('listaRetos');
-    const listaCategorias = document.getElementById('listaCategorias');
-
-    formCategoria.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const nombre = document.getElementById('nombreCategoria').value;
-      const descripcion = document.getElementById('descripcionCategoria').value;
-
-      await fetch('/api/categorias', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, descripcion })
-      });
-
-      alert('Categoría creada');
-      formCategoria.reset();
-      cargarCategorias();
-    });
-
-    formReto.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const titulo = document.getElementById('titulo').value;
-      const descripcion = document.getElementById('descripcion').value;
-      const categoriaId = document.getElementById('categoria').value;
-
-      const response = await fetch('/api/retos', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ titulo, descripcion, categoriaId })
-      });
-
-      const reto = await response.json();
-      alert('Reto creado: ' + reto.titulo);
-      cargarRetos();
-      formReto.reset();
-    });
-
-    async function cargarCategorias() {
-      const response = await fetch('/api/categorias');
-      const categorias = await response.json();
-      
-      listaCategorias.innerHTML = '';
-      const select = document.getElementById('categoria');
-      select.innerHTML = '<option value="">Selecciona una categoría</option>';
-      
-      categorias.forEach(cat => {
-        listaCategorias.innerHTML += `
-          <p>${cat.nombre} - ${cat.descripcion} 
-          <button onclick="eliminarCategoria('${cat._id}')">Eliminar</button></p>
-        `;
-        
-        const option = document.createElement('option');
-        option.value = cat._id;
-        option.textContent = cat.nombre;
-        select.appendChild(option);
-      });
-    }
-
-    async function eliminarCategoria(id) {
-      await fetch(`/api/categorias/${id}`, { method: 'DELETE' });
-      alert('Categoría eliminada');
-      cargarCategorias();
-    }
-
-    async function cargarRetos() {
-      const response = await fetch('/api/retos');
-      const retos = await response.json();
-      
-      const categorias = await fetch('/api/categorias').then(r => r.json());
-      
-      listaRetos.innerHTML = '';
-      retos.forEach(reto => {
-        const categoria = categorias.find(c => c._id === reto.categoriaId);
-        const div = document.createElement('div');
-        div.innerHTML = `
-          <h3>${reto.titulo}</h3>
-          <p>${reto.descripcion}</p>
-          <p><strong>Categoría:</strong> ${categoria ? categoria.nombre : 'Sin categoría'}</p>
-          <p>Repositorio: ${reto.repositorio}</p>
-          <button onclick="verPRs('${reto._id}')">Ver Pull Requests</button>
-          <button onclick="verSoluciones('${reto._id}')">Ver Soluciones Enviadas</button>
-          <button onclick="verComentarios('${reto._id}')">Ver Historial de Comentarios</button>
-          <button onclick="mostrarCalificacion('${reto._id}')">Calificar Reto</button>
-          <button onclick="eliminarReto('${reto._id}', '${reto.titulo}')" style="background-color: red; color: white;">Eliminar Reto</button>
-          <div id="form-calificacion-${reto._id}" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
-            <h4>Calificar Reto</h4>
-            <label>Dificultad (1-5): <input type="number" id="dificultad-${reto._id}" min="1" max="5" value="3"></label><br>
-            <label>Calidad (1-5): <input type="number" id="calidad-${reto._id}" min="1" max="5" value="3"></label><br>
-            <label>Utilidad (1-5): <input type="number" id="utilidad-${reto._id}" min="1" max="5" value="3"></label><br>
-            <button onclick="guardarCalificacion('${reto._id}')">Guardar</button>
-            <button onclick="cancelarCalificacion('${reto._id}')">Cancelar</button>
-          </div>
-          <div id="prs-${reto._id}"></div>
-          <div id="soluciones-${reto._id}"></div>
-          <div id="comentarios-${reto._id}"></div>
-          <hr>
-        `;
-        listaRetos.appendChild(div);
-      });
-    }
-
-    function mostrarCalificacion(retoId) {
-      const form = document.getElementById(`form-calificacion-${retoId}`);
-      form.style.display = 'block';
-    }
-
-    function cancelarCalificacion(retoId) {
-      const form = document.getElementById(`form-calificacion-${retoId}`);
-      form.style.display = 'none';
-    }
-
-    async function guardarCalificacion(retoId) {
-      const dificultad = document.getElementById(`dificultad-${retoId}`).value;
-      const calidad = document.getElementById(`calidad-${retoId}`).value;
-      const utilidad = document.getElementById(`utilidad-${retoId}`).value;
-
-      await fetch('/api/calificaciones', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ retoId, dificultad, calidad, utilidad })
-      });
-
-      alert('Calificación guardada');
-      cancelarCalificacion(retoId);
-    }
-
-    async function verComentarios(retoId) {
-      const response = await fetch(`/api/retos/${retoId}/comentarios`);
-      const comentarios = await response.json();
-      
-      const divComentarios = document.getElementById(`comentarios-${retoId}`);
-      
-      if (comentarios.length === 0) {
-        divComentarios.innerHTML = '<p>No hay comentarios aún</p>';
-      } else {
-        divComentarios.innerHTML = '<h4>Historial de Comentarios:</h4>';
-        comentarios.forEach(com => {
-          divComentarios.innerHTML += `
-            <p>
-              <strong>${com.autor}</strong> - PR #${com.prNumber}
-              <br>${com.contenido}
-              <br><small>${new Date(com.fechaCreacion).toLocaleString()}</small>
-            </p>
-          `;
-        });
-      }
-    }
-
-    async function eliminarReto(retoId, titulo) {
-      const confirmacion = confirm(`¿Estás seguro de eliminar el reto "${titulo}"? Esto eliminará el repositorio de GitHub y todos los datos asociados.`);
-      
-      if (!confirmacion) return;
-      
-      await fetch(`/api/retos/${retoId}`, { method: 'DELETE' });
-      
-      alert('Reto eliminado correctamente');
-      cargarRetos();
-    }
-
-    async function verSoluciones(retoId) {
-      const response = await fetch(`/api/retos/${retoId}/soluciones`);
-      const soluciones = await response.json();
-      
-      const divSoluciones = document.getElementById(`soluciones-${retoId}`);
-      
-      if (soluciones.length === 0) {
-        divSoluciones.innerHTML = '<p>No hay soluciones enviadas aún</p>';
-      } else {
-        divSoluciones.innerHTML = '<h4>Soluciones Enviadas:</h4>';
-        soluciones.forEach(solucion => {
-          divSoluciones.innerHTML += `
-            <div style="border: 1px solid #ccc; padding: 10px; margin: 10px 0;">
-              <p><strong>Estado:</strong> ${solucion.estado}</p>
-              <p>PR #${solucion.pullRequestNumber}</p>
-              <p><a href="${solucion.pullRequestUrl}" target="_blank">Ver Pull Request</a></p>
-              <p>Enviado: ${new Date(solucion.fechaEnvio).toLocaleDateString()}</p>
-              
-              <textarea id="comentario-aprobar-${solucion._id}" placeholder="Comentario de aprobación" rows="2" style="width: 100%;"></textarea>
-              <button onclick="aprobarPR('${solucion._id}', '${retoId}', ${solucion.pullRequestNumber})">Aprobar y Merge</button>
-              
-              <br><br>
-              
-              <textarea id="comentario-rechazar-${solucion._id}" placeholder="Comentario de rechazo" rows="2" style="width: 100%;"></textarea>
-              <button onclick="rechazarPR('${solucion._id}', '${retoId}', ${solucion.pullRequestNumber})">Rechazar y Cerrar</button>
-            </div>
-          `;
-        });
-      }
-    }
-
-    async function aprobarPR(solucionId, retoId, prNumber) {
-      const comentario = document.getElementById(`comentario-aprobar-${solucionId}`).value;
-      
-      if (!comentario) {
-        alert('Por favor escribe un comentario explicando por qué apruebas este PR');
-        return;
-      }
-      
-      const response = await fetch(`/api/retos/${retoId}/soluciones/${solucionId}/aprobar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prNumber: prNumber, comentario: comentario })
-      });
-      
-      alert('PR aprobado y merged en GitHub!');
-      verSoluciones(retoId);
-    }
-
-    async function rechazarPR(solucionId, retoId, prNumber) {
-      const comentario = document.getElementById(`comentario-rechazar-${solucionId}`).value;
-      
-      if (!comentario) {
-        alert('Por favor escribe un comentario explicando por qué rechazas este PR');
-        return;
-      }
-      
-      const response = await fetch(`/api/retos/${retoId}/soluciones/${solucionId}/rechazar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prNumber: prNumber, comentario: comentario })
-      });
-      
-      alert('PR rechazado y cerrado en GitHub!');
-      verSoluciones(retoId);
-    }
-
-    async function verPRs(retoId) {
-      const response = await fetch(`/api/retos/${retoId}/prs`);
-      const prs = await response.json();
-      
-      const divPRs = document.getElementById(`prs-${retoId}`);
-      
-      if (prs.length === 0) {
-        divPRs.innerHTML = '<p>No hay pull requests aún</p>';
-      } else {
-        divPRs.innerHTML = '<h4>Pull Requests:</h4>';
-        prs.forEach(pr => {
-          divPRs.innerHTML += `
-            <p>
-              PR #${pr.number}: ${pr.title} - ${pr.state}
-              <br><a href="${pr.html_url}" target="_blank">Ver en GitHub</a>
-              <br>
-              <form onsubmit="comentarPR(event, '${retoId}', ${pr.number})">
-                <input type="text" id="comentario-${retoId}-${pr.number}" placeholder="Escribe un comentario" required>
-                <button type="submit">Enviar Comentario</button>
-              </form>
-            </p>
-          `;
-        });
-      }
-    }
-
-    async function comentarPR(event, retoId, prNumber) {
-      event.preventDefault();
-      
-      const comentario = document.getElementById(`comentario-${retoId}-${prNumber}`).value;
-      
-      const response = await fetch(`/api/retos/${retoId}/comentar`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prNumber: prNumber,
-          comentario: comentario
-        })
-      });
-      
-      alert('Comentario enviado correctamente');
-      event.target.reset();
-    }
-
-    cargarCategorias();
-    cargarRetos();
-  </script>
+  <script src="mentor.js"></script>
 </body>
 </html>
