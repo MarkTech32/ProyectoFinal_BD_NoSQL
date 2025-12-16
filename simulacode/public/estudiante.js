@@ -63,4 +63,62 @@ async function enviarSolucion(event, retoId) {
   event.target.reset();
 }
 
+// Manejo de Sesiones de Mentoría
+const estudianteId = '69411067d5623f60e091af19'; // Cambiar por el ID real del estudiante
+
+async function cargarSesionesDisponibles() {
+  const response = await fetch('/api/sesiones');
+  const sesiones = await response.json();
+  
+  const listaSesiones = document.getElementById('listaSesionesDisponibles');
+  listaSesiones.innerHTML = '';
+  
+  if (sesiones.length === 0) {
+    listaSesiones.innerHTML = '<p>No hay sesiones disponibles</p>';
+  } else {
+    sesiones.forEach(sesion => {
+      const fechaFormateada = new Date(sesion.fecha).toLocaleDateString();
+      const estaInscrito = sesion.estudiantesInscritos.includes(estudianteId);
+      
+      listaSesiones.innerHTML += `
+        <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0; background-color: ${estaInscrito ? '#d4edda' : 'white'};">
+          <h4>${sesion.titulo}</h4>
+          <p>${sesion.descripcion}</p>
+          <p><strong>Fecha:</strong> ${fechaFormateada} a las ${sesion.hora}</p>
+          <p><strong>Link de la sesión:</strong> <a href="${sesion.link}" target="_blank">${sesion.link}</a></p>
+          <p><strong>Mentor:</strong> ${sesion.mentorId?.nombre || 'Sin información'}</p>
+          <p><strong>Inscritos:</strong> ${sesion.estudiantesInscritos.length} estudiante(s)</p>
+          ${estaInscrito 
+            ? `<button onclick="cancelarInscripcion('${sesion._id}')" style="background-color: #dc3545; color: white;">Cancelar Inscripción</button>`
+            : `<button onclick="inscribirse('${sesion._id}')" style="background-color: #28a745; color: white;">Inscribirme</button>`
+          }
+        </div>
+      `;
+    });
+  }
+}
+
+async function inscribirse(sesionId) {
+  await fetch(`/api/sesiones/${sesionId}/inscribir`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ estudianteId })
+  });
+  
+  alert('¡Te has inscrito exitosamente!');
+  cargarSesionesDisponibles();
+}
+
+async function cancelarInscripcion(sesionId) {
+  await fetch(`/api/sesiones/${sesionId}/cancelar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ estudianteId })
+  });
+  
+  alert('Inscripción cancelada');
+  cargarSesionesDisponibles();
+}
+
+cargarSesionesDisponibles();
 cargarRetos();

@@ -20,6 +20,7 @@ const logrosRoutes = require('./routes/logros');
 const estadisticasRoutes = require('./routes/estadisticas');
 const usuariosRoutes = require('./routes/usuarios');
 const recursosRoutes = require('./routes/recursos');
+const sesionesRoutes = require('./routes/sesiones');
 
 app.use('/api', retosRoutes);
 app.use('/api', solucionesRoutes);
@@ -30,6 +31,7 @@ app.use('/api', logrosRoutes);
 app.use('/api', estadisticasRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', recursosRoutes);
+app.use('/api', sesionesRoutes);
 
 app.get('/prueba-github', async (req, res) => {
   const repos = await octokit.repos.listForAuthenticatedUser();

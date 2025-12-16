@@ -42,6 +42,19 @@
   <h2>Mis Retos</h2>
   <div id="listaRetos"></div>
 
+  <h2>Gestionar Sesiones de Mentoría</h2>
+  <form id="formSesion">
+    <input type="text" id="tituloSesion" placeholder="Título de la sesión" required>
+    <input type="text" id="descripcionSesion" placeholder="Descripción" required>
+    <input type="date" id="fechaSesion" required>
+    <input type="time" id="horaSesion" required>
+    <input type="url" id="linkSesion" placeholder="Link de la sesión virtual (Zoom, Meet, etc)" required>
+    <button type="submit">Crear Sesión</button>
+  </form>
+
+  <h3>Mis Sesiones Creadas</h3>
+  <div id="listaSesiones"></div>
+
   <script src="mentor.js"></script>
 </body>
 </html>

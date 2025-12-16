@@ -407,3 +407,69 @@ async function eliminarRecurso(recursoId, retoId) {
   alert('Recurso eliminado');
   mostrarRecursos(retoId);
 }
+
+// Manejo de Sesiones de Mentoría
+const formSesion = document.getElementById('formSesion');
+
+formSesion.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const titulo = document.getElementById('tituloSesion').value;
+  const descripcion = document.getElementById('descripcionSesion').value;
+  const fecha = document.getElementById('fechaSesion').value;
+  const hora = document.getElementById('horaSesion').value;
+  const link = document.getElementById('linkSesion').value;
+  
+  await fetch('/api/sesiones', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      mentorId: '69411067d5623f60e091af19', // Cambiar por el ID real del mentor
+      titulo, 
+      descripcion, 
+      fecha, 
+      hora,
+      link
+    })
+  });
+  
+  alert('Sesión creada');
+  formSesion.reset();
+  cargarSesiones();
+});
+
+async function cargarSesiones() {
+  const response = await fetch('/api/sesiones');
+  const sesiones = await response.json();
+  
+  const listaSesiones = document.getElementById('listaSesiones');
+  listaSesiones.innerHTML = '';
+  
+  if (sesiones.length === 0) {
+    listaSesiones.innerHTML = '<p>No hay sesiones creadas</p>';
+  } else {
+    sesiones.forEach(sesion => {
+      const fechaFormateada = new Date(sesion.fecha).toLocaleDateString();
+      
+      listaSesiones.innerHTML += `
+        <div style="border: 1px solid #ccc; padding: 15px; margin: 10px 0;">
+          <h4>${sesion.titulo}</h4>
+          <p>${sesion.descripcion}</p>
+          <p><strong>Fecha:</strong> ${fechaFormateada} a las ${sesion.hora}</p>
+          <p><strong>Link:</strong> <a href="${sesion.link}" target="_blank">${sesion.link}</a></p>
+          <p><strong>Inscritos:</strong> ${sesion.estudiantesInscritos.length} estudiante(s)</p>
+          <button onclick="eliminarSesion('${sesion._id}')">Eliminar Sesión</button>
+        </div>
+      `;
+    });
+  }
+}
+
+async function eliminarSesion(sesionId) {
+  await fetch(`/api/sesiones/${sesionId}`, { method: 'DELETE' });
+  alert('Sesión eliminada');
+  cargarSesiones();
+}
+
+// Cargar sesiones al inicio
+cargarSesiones();
