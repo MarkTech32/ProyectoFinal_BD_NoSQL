@@ -150,6 +150,7 @@ async function cargarRetos() {
       <button onclick="verSoluciones('${reto._id}')">Ver Soluciones Enviadas</button>
       <button onclick="verComentarios('${reto._id}')">Ver Historial de Comentarios</button>
       <button onclick="mostrarCalificacion('${reto._id}')">Calificar Reto</button>
+      <button onclick="mostrarRecursos('${reto._id}')">Gestionar Recursos</button>
       <button onclick="eliminarReto('${reto._id}', '${reto.titulo}')" style="background-color: red; color: white;">Eliminar Reto</button>
       <div id="form-calificacion-${reto._id}" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
         <h4>Calificar Reto</h4>
@@ -162,6 +163,7 @@ async function cargarRetos() {
       <div id="prs-${reto._id}"></div>
       <div id="soluciones-${reto._id}"></div>
       <div id="comentarios-${reto._id}"></div>
+      <div id="recursos-${reto._id}"></div>
       <hr>
     `;
     listaRetos.appendChild(div);
@@ -341,3 +343,67 @@ async function comentarPR(event, retoId, prNumber) {
 cargarCategorias();
 cargarEtiquetas();
 cargarRetos();
+
+async function mostrarRecursos(retoId) {
+  const response = await fetch(`/api/retos/${retoId}/recursos`);
+  const recursos = await response.json();
+  
+  const divRecursos = document.getElementById(`recursos-${retoId}`);
+  
+  divRecursos.innerHTML = '<h4>Recursos:</h4>';
+  
+  divRecursos.innerHTML += `
+    <form onsubmit="agregarRecurso(event, '${retoId}')">
+      <input type="text" id="titulo-recurso-${retoId}" placeholder="Título" required>
+      <input type="url" id="url-recurso-${retoId}" placeholder="URL" required>
+      <select id="tipo-recurso-${retoId}">
+        <option value="video">Video</option>
+        <option value="articulo">Artículo</option>
+        <option value="documentacion">Documentación</option>
+        <option value="tutorial">Tutorial</option>
+      </select>
+      <input type="text" id="descripcion-recurso-${retoId}" placeholder="Descripción">
+      <button type="submit">Agregar Recurso</button>
+    </form>
+    <br>
+  `;
+  
+  if (recursos.length === 0) {
+    divRecursos.innerHTML += '<p>No hay recursos agregados</p>';
+  } else {
+    recursos.forEach(recurso => {
+      divRecursos.innerHTML += `
+        <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0;">
+          <strong>${recurso.titulo}</strong> (${recurso.tipo})
+          <br><a href="${recurso.url}" target="_blank">${recurso.url}</a>
+          <br><small>${recurso.descripcion || ''}</small>
+          <br><button onclick="eliminarRecurso('${recurso._id}', '${retoId}')">Eliminar</button>
+        </div>
+      `;
+    });
+  }
+}
+
+async function agregarRecurso(event, retoId) {
+  event.preventDefault();
+  
+  const titulo = document.getElementById(`titulo-recurso-${retoId}`).value;
+  const url = document.getElementById(`url-recurso-${retoId}`).value;
+  const tipo = document.getElementById(`tipo-recurso-${retoId}`).value;
+  const descripcion = document.getElementById(`descripcion-recurso-${retoId}`).value;
+  
+  await fetch('/api/recursos', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ retoId, titulo, url, tipo, descripcion })
+  });
+  
+  alert('Recurso agregado');
+  mostrarRecursos(retoId);
+}
+
+async function eliminarRecurso(recursoId, retoId) {
+  await fetch(`/api/recursos/${recursoId}`, { method: 'DELETE' });
+  alert('Recurso eliminado');
+  mostrarRecursos(retoId);
+}
