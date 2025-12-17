@@ -57,6 +57,7 @@ async function enviarSolucion(event, retoId) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       retoId: retoId,
+      estudianteId: estudianteId,  
       pullRequestUrl: prUrl,
       pullRequestNumber: prNumber,
       estado: 'pendiente'
