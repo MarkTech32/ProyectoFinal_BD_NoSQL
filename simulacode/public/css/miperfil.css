@@ -1,0 +1,138 @@
+body {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+   
+  h1::before {
+    content: "👤";
+    margin-right: 15px;
+  }
+   
+  #infoPersonal {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+    border-left: 5px solid #667eea;
+  }
+   
+  #infoPersonal p {
+    font-size: 1.1em;
+    margin: 12px 0;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+   
+  #infoPersonal strong {
+    color: #667eea;
+    min-width: 180px;
+  }
+   
+  /* Estadísticas */
+  #estadisticas {
+    margin-bottom: 30px;
+  }
+   
+  #estadisticas > div {
+    background: white !important;
+    border-radius: 12px !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
+    padding: 25px !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+  }
+   
+  #estadisticas > div:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
+  }
+   
+  #estadisticas h3 {
+    color: #667eea !important;
+    margin: 0 0 10px 0 !important;
+    font-size: 2.5em !important;
+    font-weight: bold !important;
+  }
+   
+  #estadisticas p {
+    color: #666 !important;
+    font-size: 0.9em !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    margin: 0 !important;
+  }
+   
+  #estadisticas > div[style*="#d4edda"] {
+    border-top: 5px solid #27ae60 !important;
+  }
+   
+  #estadisticas > div[style*="#d4edda"] h3 {
+    color: #27ae60 !important;
+  }
+   
+  #estadisticas > div[style*="#f8d7da"] {
+    border-top: 5px solid #e74c3c !important;
+  }
+   
+  #estadisticas > div[style*="#f8d7da"] h3 {
+    color: #e74c3c !important;
+  }
+   
+  /* Logros */
+  h2:nth-of-type(3)::before {
+    content: "🏆";
+    margin-right: 10px;
+  }
+   
+  #listaLogros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+   
+  #listaLogros > div {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 3px solid #667eea;
+  }
+   
+  #listaLogros > div:hover {
+    transform: scale(1.1) rotate(2deg);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+    border-color: #764ba2;
+  }
+   
+  #listaLogros h3 {
+    color: #667eea;
+    font-size: 1em;
+    margin-top: 10px;
+  }
+   
+  #listaLogros p {
+    color: #666;
+    font-size: 0.85em;
+    padding: 0 10px;
+  }
+   
+  #listaLogros small {
+    color: #999;
+    font-size: 0.75em;
+  }
+   
+  #listaLogros > p {
+    width: 100%;
+    text-align: center;
+    color: white;
+    background: rgba(255,255,255,0.2);
+    padding: 20px;
+    border-radius: 10px;
+    font-size: 1.1em;
+  }
