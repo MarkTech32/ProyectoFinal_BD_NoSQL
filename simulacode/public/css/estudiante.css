@@ -1,123 +1,182 @@
+/* ======================
+   Variables de color
+====================== */
+:root {
+  --primary: #764ba2;
+  --primary-light: #efe9f7;
+  --secondary: #667eea;
+  --secondary-light: #eef1ff;
+  --success: #27ae60;
+  --info: #2196f3;
+  --warning: #ffc107;
+
+  --bg-soft: #f8f9fa;
+  --bg-gradient: linear-gradient(135deg, #f8f9ff, #ffffff);
+
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* ======================
+   Lista de Retos
+====================== */
 #listaRetos > div {
-    background: white;
-    padding: 25px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    border-left: 4px solid #764ba2;
-  }
-   
-  #listaRetos > div:hover {
-    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-    transform: translateY(-3px);
-  }
-   
-  #listaRetos h3 {
-    color: #764ba2;
-    font-size: 1.5em;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-  }
-   
-  #listaRetos h3::before {
-    content: "🎯";
-    margin-right: 10px;
-    font-size: 1.2em;
-  }
-   
-  #listaRetos h4 {
-    color: #667eea;
-    margin: 15px 0 10px 0;
-    padding-bottom: 5px;
-    border-bottom: 2px solid #e0e0e0;
-  }
-   
-  #listaRetos form {
-    background: #f8f9fa;
-    padding: 15px;
-    margin-top: 15px;
-    border-radius: 8px;
-    border: 2px dashed #764ba2;
-  }
-   
-  #listaRetos button {
-    background: #764ba2;
-    margin-top: 10px;
-  }
-   
-  #listaRetos button:hover {
-    background: #5a3679;
-  }
-   
-  /* Recursos */
-  div[style*="background-color: #f9f9f9"] {
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
-    border-left: 3px solid #667eea !important;
-    transition: all 0.3s;
-  }
-   
-  div[style*="background-color: #f9f9f9"]:hover {
-    transform: translateX(5px);
-  }
-   
-  /* Sesiones disponibles */
-  #listaSesionesDisponibles > div {
-    background: white;
-    padding: 20px;
-    border-radius: 12px;
-    margin: 15px 0;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    border-left: 4px solid #667eea;
-  }
-   
-  #listaSesionesDisponibles > div:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-  }
-   
-  #listaSesionesDisponibles h4 {
-    color: #667eea;
-    font-size: 1.3em;
-    margin-bottom: 10px;
-  }
-   
-  #listaSesionesDisponibles > div[style*="#d4edda"] {
-    border-left: 5px solid #27ae60;
-    background: linear-gradient(135deg, #fff 0%, #e8f5e9 100%);
-  }
-   
-  #listaSesionesDisponibles > div[style*="#d4edda"] h4 {
-    color: #27ae60;
-  }
-   
-  #listaSesionesDisponibles button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    font-weight: 600;
-  }
-   
-  /* Formulario de testimonio */
-  div[id^="form-testimonio-"] {
-    background: #fff9e6 !important;
-    border: 2px solid #ffc107 !important;
-    margin: 15px 0 !important;
-  }
-   
-  div[id^="form-testimonio-"] h4 {
-    color: #f57c00;
-  }
-   
-  /* Testimonios */
-  div[id^="testimonios-"] > div {
-    background: #f0f8ff !important;
-    border-left: 3px solid #2196f3 !important;
-    margin: 10px 0 !important;
-  }
-   
-  div[id^="testimonios-"] strong {
-    color: #2196f3;
-    font-size: 1.1em;
-  }
+  background: var(--bg-gradient);
+  padding: 24px;
+  border-radius: 16px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-soft);
+  border-left: 6px solid var(--primary);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+#listaRetos > div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, var(--primary-light));
+  opacity: 0.35;
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+#listaRetos > div:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover);
+}
+
+#listaRetos h3 {
+  color: var(--primary);
+  font-size: 1.5em;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#listaRetos h3::before {
+  content: "🎯";
+  background: var(--primary-light);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+#listaRetos h4 {
+  color: var(--secondary);
+  margin: 20px 0 12px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--secondary-light);
+}
+
+/* ======================
+   Formularios dentro de retos
+====================== */
+#listaRetos form {
+  background: linear-gradient(135deg, #ffffff, var(--primary-light));
+  padding: 18px;
+  margin-top: 16px;
+  border-radius: 12px;
+  border: 2px dashed var(--primary);
+}
+
+/* ======================
+   Botones
+====================== */
+#listaRetos button,
+#listaSesionesDisponibles button {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  color: white;
+  margin-top: 12px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#listaRetos button:hover,
+#listaSesionesDisponibles button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ======================
+   Recursos
+====================== */
+div[style*="background-color: #f9f9f9"] {
+  background: linear-gradient(135deg, #f5f7fa, #dbe4f3) !important;
+  border-left: 5px solid var(--secondary) !important;
+  border-radius: 12px;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+div[style*="background-color: #f9f9f9"]:hover {
+  transform: translateX(6px);
+  box-shadow: var(--shadow-soft);
+}
+
+/* ======================
+   Sesiones disponibles
+====================== */
+#listaSesionesDisponibles > div {
+  background: linear-gradient(135deg, #ffffff, var(--secondary-light));
+  padding: 20px;
+  border-radius: 16px;
+  margin: 16px 0;
+  box-shadow: var(--shadow-soft);
+  border-left: 6px solid var(--secondary);
+  transition: all 0.3s ease;
+}
+
+#listaSesionesDisponibles > div:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+#listaSesionesDisponibles h4 {
+  color: var(--secondary);
+  font-size: 1.3em;
+  margin-bottom: 10px;
+}
+
+/* Sesiones completadas */
+#listaSesionesDisponibles > div[style*="#d4edda"] {
+  background: linear-gradient(135deg, #ffffff, #e6f6ee);
+  border-left-color: var(--success);
+}
+
+#listaSesionesDisponibles > div[style*="#d4edda"] h4 {
+  color: var(--success);
+}
+
+/* ======================
+   Formulario de Testimonio
+====================== */
+div[id^="form-testimonio-"] {
+  background: linear-gradient(135deg, #fff8e1, #fff3c4) !important;
+  border: 2px solid var(--warning) !important;
+  border-radius: 14px;
+  margin: 16px 0 !important;
+}
+
+div[id^="form-testimonio-"] h4 {
+  color: #f57c00;
+}
+
+/* ======================
+   Testimonios
+====================== */
+div[id^="testimonios-"] > div {
+  background: linear-gradient(135deg, #ffffff, #eaf3ff) !important;
+  border-left: 5px solid var(--info) !important;
+  border-radius: 12px;
+  margin: 12px 0 !important;
+  padding: 14px;
+}
+
+div[id^="testimonios-"] strong {
+  color: var(--info);
+  font-size: 1.1em;
+}

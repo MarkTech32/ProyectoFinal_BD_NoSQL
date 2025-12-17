@@ -1,138 +1,226 @@
+/* ======================
+   Variables base (usa las globales si ya existen)
+====================== */
+:root {
+  --primary: #764ba2;
+  --primary-light: #efe9f7;
+  --success: #27ae60;
+  --success-light: #e6f6ee;
+  --danger: #e74c3c;
+
+  --bg-soft: #f8f9fa;
+  --bg-gradient: linear-gradient(135deg, #f8f9ff, #ffffff);
+  --text-soft: #555;
+
+  --shadow-soft: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 24px rgba(0, 0, 0, 0.15);
+
+  --radius: 16px;
+}
+
+/* ======================
+   Layout general
+====================== */
 body {
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-   
-  h1::before {
-    content: "👤";
-    margin-right: 15px;
-  }
-   
-  #infoPersonal {
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    margin-bottom: 30px;
-    border-left: 5px solid #667eea;
-  }
-   
-  #infoPersonal p {
-    font-size: 1.1em;
-    margin: 12px 0;
-    padding: 10px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-  }
-   
-  #infoPersonal strong {
-    color: #667eea;
-    min-width: 180px;
-  }
-   
-  /* Estadísticas */
-  #estadisticas {
-    margin-bottom: 30px;
-  }
-   
-  #estadisticas > div {
-    background: white !important;
-    border-radius: 12px !important;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1) !important;
-    padding: 25px !important;
-    text-align: center !important;
-    transition: all 0.3s ease !important;
-  }
-   
-  #estadisticas > div:hover {
-    transform: translateY(-5px) scale(1.02);
-    box-shadow: 0 6px 15px rgba(0,0,0,0.15) !important;
-  }
-   
-  #estadisticas h3 {
-    color: #667eea !important;
-    margin: 0 0 10px 0 !important;
-    font-size: 2.5em !important;
-    font-weight: bold !important;
-  }
-   
-  #estadisticas p {
-    color: #666 !important;
-    font-size: 0.9em !important;
-    text-transform: uppercase !important;
-    letter-spacing: 1px !important;
-    margin: 0 !important;
-  }
-   
-  #estadisticas > div[style*="#d4edda"] {
-    border-top: 5px solid #27ae60 !important;
-  }
-   
-  #estadisticas > div[style*="#d4edda"] h3 {
-    color: #27ae60 !important;
-  }
-   
-  #estadisticas > div[style*="#f8d7da"] {
-    border-top: 5px solid #e74c3c !important;
-  }
-   
-  #estadisticas > div[style*="#f8d7da"] h3 {
-    color: #e74c3c !important;
-  }
-   
-  /* Logros */
-  h2:nth-of-type(3)::before {
-    content: "🏆";
-    margin-right: 10px;
-  }
-   
-  #listaLogros {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    justify-content: center;
-  }
-   
-  #listaLogros > div {
-    background: white;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    border: 3px solid #667eea;
-  }
-   
-  #listaLogros > div:hover {
-    transform: scale(1.1) rotate(2deg);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-    border-color: #764ba2;
-  }
-   
-  #listaLogros h3 {
-    color: #667eea;
-    font-size: 1em;
-    margin-top: 10px;
-  }
-   
-  #listaLogros p {
-    color: #666;
-    font-size: 0.85em;
-    padding: 0 10px;
-  }
-   
-  #listaLogros small {
-    color: #999;
-    font-size: 0.75em;
-  }
-   
-  #listaLogros > p {
-    width: 100%;
-    text-align: center;
-    color: white;
-    background: rgba(255,255,255,0.2);
-    padding: 20px;
-    border-radius: 10px;
-    font-size: 1.1em;
-  }
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ======================
+   Título principal
+====================== */
+h1 {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+h1::before {
+  content: "👤";
+  background: var(--primary-light);
+  padding: 8px;
+  border-radius: 10px;
+}
+
+/* ======================
+   Información personal
+====================== */
+#infoPersonal {
+  background: var(--bg-gradient);
+  padding: 30px;
+  border-radius: var(--radius);
+  margin-bottom: 32px;
+  box-shadow: var(--shadow-soft);
+  border-left: 6px solid var(--primary);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  position: relative;
+}
+
+#infoPersonal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, var(--primary-light));
+  opacity: 0.35;
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+#infoPersonal:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+#infoPersonal p {
+  font-size: 1em;
+  margin: 14px 0;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, #ffffff, var(--primary-light));
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: var(--text-soft);
+}
+
+#infoPersonal strong {
+  color: var(--primary);
+  min-width: 180px;
+  font-weight: 600;
+}
+
+/* ======================
+   Estadísticas
+====================== */
+#estadisticas {
+  margin-bottom: 34px;
+}
+
+#estadisticas > div {
+  background: var(--bg-gradient) !important;
+  border-radius: var(--radius) !important;
+  box-shadow: var(--shadow-soft) !important;
+  padding: 26px !important;
+  text-align: center !important;
+  transition: all 0.3s ease !important;
+  border-top: 6px solid var(--primary);
+}
+
+#estadisticas > div:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-hover) !important;
+}
+
+#estadisticas h3 {
+  color: var(--primary) !important;
+  margin: 0 0 8px 0 !important;
+  font-size: 2.6em !important;
+  font-weight: 700 !important;
+}
+
+#estadisticas p {
+  color: var(--text-soft) !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.9px !important;
+  margin: 0 !important;
+}
+
+/* Variantes de estado */
+#estadisticas > div[style*="#d4edda"] {
+  background: linear-gradient(135deg, #ffffff, var(--success-light)) !important;
+  border-top-color: var(--success) !important;
+}
+
+#estadisticas > div[style*="#d4edda"] h3 {
+  color: var(--success) !important;
+}
+
+#estadisticas > div[style*="#f8d7da"] {
+  background: linear-gradient(135deg, #ffffff, #fdecea) !important;
+  border-top-color: var(--danger) !important;
+}
+
+#estadisticas > div[style*="#f8d7da"] h3 {
+  color: var(--danger) !important;
+}
+
+/* ======================
+   Logros
+====================== */
+h2:nth-of-type(3) {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h2:nth-of-type(3)::before {
+  content: "🏆";
+  background: var(--primary-light);
+  padding: 6px;
+  border-radius: 8px;
+}
+
+#listaLogros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 22px;
+  justify-content: center;
+}
+
+#listaLogros > div {
+  background: var(--bg-gradient);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-soft);
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 3px solid var(--primary);
+  position: relative;
+}
+
+#listaLogros > div::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, transparent, var(--primary-light));
+  opacity: 0.3;
+  border-radius: var(--radius);
+  pointer-events: none;
+}
+
+#listaLogros > div:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary);
+}
+
+#listaLogros h3 {
+  color: var(--primary);
+  font-size: 0.95em;
+  margin: 10px 0 6px;
+}
+
+#listaLogros p {
+  color: var(--text-soft);
+  font-size: 0.85em;
+  margin: 0 0 6px;
+}
+
+#listaLogros small {
+  color: #888;
+  font-size: 0.75em;
+}
+
+/* Estado vacío */
+#listaLogros > p {
+  width: 100%;
+  text-align: center;
+  color: var(--text-soft);
+  background: linear-gradient(135deg, #ffffff, var(--bg-soft));
+  padding: 22px;
+  border-radius: 12px;
+  font-size: 1em;
+  box-shadow: var(--shadow-soft);
+}
