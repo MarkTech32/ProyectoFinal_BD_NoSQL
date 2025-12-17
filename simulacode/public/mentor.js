@@ -151,6 +151,7 @@ async function cargarRetos() {
       <button onclick="verComentarios('${reto._id}')">Ver Historial de Comentarios</button>
       <button onclick="mostrarCalificacion('${reto._id}')">Calificar Reto</button>
       <button onclick="mostrarRecursos('${reto._id}')">Gestionar Recursos</button>
+      <button onclick="verTestimoniosMentor('${reto._id}')">Ver Reviews de Estudiantes</button>
       <button onclick="eliminarReto('${reto._id}', '${reto.titulo}')" style="background-color: red; color: white;">Eliminar Reto</button>
       <div id="form-calificacion-${reto._id}" style="display: none; margin: 10px 0; padding: 10px; border: 1px solid #ccc;">
         <h4>Calificar Reto</h4>
@@ -164,6 +165,7 @@ async function cargarRetos() {
       <div id="soluciones-${reto._id}"></div>
       <div id="comentarios-${reto._id}"></div>
       <div id="recursos-${reto._id}"></div>
+      <div id="testimonios-mentor-${reto._id}"></div>
       <hr>
     `;
     listaRetos.appendChild(div);
@@ -473,3 +475,42 @@ async function eliminarSesion(sesionId) {
 
 // Cargar sesiones al inicio
 cargarSesiones();
+
+// Funciones para ver Testimonios (Mentor)
+async function verTestimoniosMentor(retoId) {
+  const response = await fetch(`/api/retos/${retoId}/testimonios`);
+  const testimonios = await response.json();
+  
+  const divTestimonios = document.getElementById(`testimonios-mentor-${retoId}`);
+  
+  if (testimonios.length === 0) {
+    divTestimonios.innerHTML = '<p>No hay reviews de estudiantes aún</p>';
+  } else {
+    divTestimonios.innerHTML = '<h4>Reviews de Estudiantes:</h4>';
+    
+    let sumaDificultad = 0;
+    let sumaUtilidad = 0;
+    
+    testimonios.forEach(testimonio => {
+      sumaDificultad += testimonio.calificacionDificultad;
+      sumaUtilidad += testimonio.calificacionUtilidad;
+      
+      divTestimonios.innerHTML += `
+        <div style="border: 1px solid #ddd; padding: 10px; margin: 5px 0; background-color: #f0f8ff;">
+          <strong>${testimonio.estudianteId?.nombre || 'Estudiante'}</strong>
+          <br>⭐ Dificultad: ${testimonio.calificacionDificultad}/5 | Utilidad: ${testimonio.calificacionUtilidad}/5
+          <br><em>"${testimonio.comentario}"</em>
+          <br><small>${new Date(testimonio.fechaCreacion).toLocaleDateString()}</small>
+        </div>
+      `;
+    });
+    
+    const promedioDificultad = (sumaDificultad / testimonios.length).toFixed(1);
+    const promedioUtilidad = (sumaUtilidad / testimonios.length).toFixed(1);
+    
+    divTestimonios.innerHTML = `
+      <h4>Reviews de Estudiantes (${testimonios.length}):</h4>
+      <p><strong>Promedio:</strong> Dificultad ${promedioDificultad}/5 | Utilidad ${promedioUtilidad}/5</p>
+    ` + divTestimonios.innerHTML.split('</h4>')[1];
+  }
+}
